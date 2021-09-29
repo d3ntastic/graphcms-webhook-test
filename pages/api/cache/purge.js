@@ -42,9 +42,9 @@ export default async function handler(req, res) {
 				method: 'POST',
 				headers: { 'Content-Type':'application/json' },
 				
-				body: JSON.stringify(languages.values),
+				body: JSON.stringify(languages.values()),
 			})
-			const isoLanguages = languages.values.reduce((acc, language) => {
+			const isoLanguages = languages.values().reduce((acc, language) => {
 				const { iso, code } = language
 				return { ...acc, [iso]: code }
 			}, {})
