@@ -43,7 +43,7 @@ export default async function handler(req, res) {
 				method: 'POST',
 				headers: { 'Content-Type':'application/json' },
 				
-				body: "Im valid",
+				body: JSON.stringify(languages.values),
 			})
 			const isoLanguages = languages.values.reduce((acc, language) => {
 				const { iso, code } = language
