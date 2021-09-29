@@ -19,15 +19,15 @@ const verifySignature = async (signature, body) => {
 	const secret = process.env.GRAPHCMS_WEBHOOK_SECRET
 	const payload = JSON.stringify({
 		Body: JSON.stringify(body),
-		environmentName,
+		EnvironmentName: environmentName,
 		TimeStamp: timestamp,
 	})
 
-	await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/verifySecret', {
+	await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/verifyPayload', {
 		method: 'POST',
 		headers: { 'Content-Type':'application/json' },
 		
-		body: secret,
+		body: payload,
 	})
 
 	const hash = createHmac('sha256', secret).update(payload).digest('base64')
