@@ -58,7 +58,7 @@ export default async function handler(req, res) {
 			const handledUrls = []
 
 			body.data.localizations.forEach(async ({ locale, urlIdentifier }) => {
-				const pageUrl = `//${host}/${isoLanguages[locale]}/${urlIdentifier}?purge=1&secret=${process.env.GRAPHCMS_WEBHOOK_SECRET}`
+				const pageUrl = `//${host}/${isoLanguages[locale]}/${urlIdentifier}?purge=1&secret=${encodeURI(process.env.GRAPHCMS_WEBHOOK_SECRET)}`
 				try {
 					handledUrls.push(pageUrl)
 					console.log(pageUrl)
