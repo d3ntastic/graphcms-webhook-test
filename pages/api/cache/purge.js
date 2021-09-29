@@ -52,6 +52,12 @@ export default async function handler(req, res) {
 			}, {})
 
 			const handledUrls = []
+			await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/test', {
+				method: 'POST',
+				headers: { 'Content-Type':'application/json' },
+				
+				body: "Im here",
+			})
 			body.data.localizations.forEach(async ({ locale, urlIdentifier }) => {
 				const pageUrl = `//${host}/${isoLanguages[locale]}/${urlIdentifier}?purge=1&secret=${process.env.GRAPHCMS_WEBHOOK_SECRET}`
 				try {
