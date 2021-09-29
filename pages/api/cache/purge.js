@@ -5,14 +5,6 @@ import { languages } from '../../../services/languageService'
 
 const verifySignature = async (signature, body) => {
 	const [rawSign, rawEnv, rawTimestamp] = signature.split(', ')
-
-	await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/verifySignature', {
-		method: 'POST',
-		headers: { 'Content-Type':'application/json' },
-		
-		body: signature,
-	})
-
 	const sign = rawSign.replace('sign=', '')
 	const environmentName = rawEnv.replace('env=', '')
 	const timestamp = parseInt(rawTimestamp.replace('t=', ''), 10)
@@ -22,14 +14,6 @@ const verifySignature = async (signature, body) => {
 		EnvironmentName: environmentName,
 		TimeStamp: timestamp,
 	})
-
-	await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/verifyPayload', {
-		method: 'POST',
-		headers: { 'Content-Type':'application/json' },
-		
-		body: payload,
-	})
-
 	const hash = createHmac('sha256', secret).update(payload).digest('base64')
 
 	await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/verify', {
@@ -77,15 +61,15 @@ export default async function handler(req, res) {
 					console.error(err)
 				}
 			})
-			res.status(200).send(
-				JSON.stringify(handledUrls),
-			)
 			await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/handledUrls', {
 				method: 'POST',
 				headers: { 'Content-Type':'application/json' },
 				
 				body: JSON.stringify(handledUrls),
 			})
+			res.status(200).send(
+				JSON.stringify(handledUrls),
+			)
 		} else {
 			await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/notAuthorized', {
 				method: 'POST',
