@@ -27,13 +27,12 @@ export default async function handler(req, res) {
 		body,
 	} = req
 
-	await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/fullBody', {
+	await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/languages', {
 		method: 'POST',
 		headers: { 'Content-Type':'application/json' },
 		
-		body: JSON.stringify(body),
+		body: JSON.stringify(languages),
 	})
-	
 	const signature = req.headers['gcms-signature']
 	if (signature) {
 		const isValid = verifySignature(signature, body)
