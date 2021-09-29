@@ -53,11 +53,13 @@ export default async function handler(req, res) {
 				JSON.stringify(handledUrls),
 			)
 		} else {
+			console.log('Not authorized')
 			res.status(401).send(
 				'Not authorized',
 			)
 		}
 	} else {
+		console.log('Not authorized')
 		res.status(401).send(
 			'Not authorized',
 		)
