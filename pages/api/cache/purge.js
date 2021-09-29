@@ -28,7 +28,7 @@ export default async function handler(req, res) {
 		},
 		body,
 	} = req
-
+	console.log(req)
 	const signature = req.headers['gcms-signature']
 	if (signature) {
 		const isValid = verifySignature(signature, body)
