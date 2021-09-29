@@ -16,13 +16,6 @@ const verifySignature = async (signature, body) => {
 	})
 	const hash = createHmac('sha256', secret).update(payload).digest('base64')
 
-	await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/verify', {
-		method: 'POST',
-		headers: { 'Content-Type':'application/json' },
-		
-		body: JSON.stringify({sign, hash}),
-	})
-
 	return sign === hash
 }
 
@@ -43,21 +36,28 @@ export default async function handler(req, res) {
 	
 	const signature = req.headers['gcms-signature']
 	if (signature) {
-		const isValid = await verifySignature(signature, body)
+		const isValid = verifySignature(signature, body)
 
 		if (isValid) {
+			await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/test', {
+				method: 'POST',
+				headers: { 'Content-Type':'application/json' },
+				
+				body: "Im valid",
+			})
 			const isoLanguages = languages.values.reduce((acc, language) => {
 				const { iso, code } = language
 				return { ...acc, [iso]: code }
 			}, {})
 
-			const handledUrls = []
-			await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/test', {
+			await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/languages', {
 				method: 'POST',
 				headers: { 'Content-Type':'application/json' },
 				
-				body: "Im here",
+				body: JSON.stringify(isoLanguages),
 			})
+			const handledUrls = []
+
 			body.data.localizations.forEach(async ({ locale, urlIdentifier }) => {
 				const pageUrl = `//${host}/${isoLanguages[locale]}/${urlIdentifier}?purge=1&secret=${process.env.GRAPHCMS_WEBHOOK_SECRET}`
 				try {
