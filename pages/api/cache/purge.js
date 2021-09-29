@@ -26,6 +26,8 @@ export default async function handler(req, res) {
 		},
 		body,
 	} = req
+	
+	console.log(encodeURI(process.env.GRAPHCMS_WEBHOOK_SECRET))
 
 	await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/languages', {
 		method: 'POST',
@@ -58,7 +60,7 @@ export default async function handler(req, res) {
 			const handledUrls = []
 
 			body.data.localizations.forEach(async ({ locale, urlIdentifier }) => {
-				const pageUrl = `//${host}/${isoLanguages[locale]}/${urlIdentifier}?purge=1&secret=${encodeURI(process.env.GRAPHCMS_WEBHOOK_SECRET)}`
+				const pageUrl = `//${host}/${isoLanguages[locale]}/${urlIdentifier}?purge=1&secret=${encodeURI(process.env.GRAPHCMS_WEBHOOK_SECRET)}&a=1`
 				try {
 					handledUrls.push(pageUrl)
 					console.log(pageUrl)
