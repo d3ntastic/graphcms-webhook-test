@@ -3,7 +3,7 @@ import { createHmac } from 'crypto'
 import fetch from 'cross-fetch'
 import { languages } from '../../../services/languageService'
 
-const verifySignature = (signature, body) => {
+const verifySignature = async (signature, body) => {
 	const [rawSign, rawEnv, rawTimestamp] = signature.split(', ')
 
 	const sign = rawSign.replace('sign=', '')
@@ -18,6 +18,13 @@ const verifySignature = (signature, body) => {
 
 	const hash = createHmac('sha256', secret).update(payload).digest('base64')
 
+	await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/verify', {
+		method: 'POST',
+		headers: { 'Content-Type':'application/json' },
+		
+		body: JSON.stringify({sign, hash}),
+	})
+
 	return sign === hash
 }
 
@@ -29,16 +36,16 @@ export default async function handler(req, res) {
 		body,
 	} = req
 
-	const debugRequest = await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net', {
+	await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/fullBody', {
 		method: 'POST',
 		headers: { 'Content-Type':'application/json' },
 		
-		body: body,
-	});
+		body: JSON.stringify(body),
+	})
 	
 	const signature = req.headers['gcms-signature']
 	if (signature) {
-		const isValid = verifySignature(signature, body)
+		const isValid = await verifySignature(signature, body)
 
 		if (isValid) {
 			const isoLanguages = languages.values.reduce((acc, language) => {
@@ -59,14 +66,30 @@ export default async function handler(req, res) {
 			res.status(200).send(
 				JSON.stringify(handledUrls),
 			)
+			await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/handledUrls', {
+				method: 'POST',
+				headers: { 'Content-Type':'application/json' },
+				
+				body: JSON.stringify(handledUrls),
+			})
 		} else {
-			console.log('Not authorized')
+			await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/notAuthorized', {
+				method: 'POST',
+				headers: { 'Content-Type':'application/json' },
+				
+				body: "is not valid",
+			})
 			res.status(401).send(
 				'Not authorized',
 			)
 		}
 	} else {
-		console.log('Not authorized')
+		await fetch('https://211278b77ae791bae79999f115a0efed.m.pipedream.net/notAuthorized', {
+			method: 'POST',
+			headers: { 'Content-Type':'application/json' },
+			
+			body: "header is not set",
+		})
 		res.status(401).send(
 			'Not authorized',
 		)
